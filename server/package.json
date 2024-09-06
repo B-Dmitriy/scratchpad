@@ -1,0 +1,31 @@
+{
+  "name": "scratchpad-server",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "compile": "tsc src/index.ts",
+    "migrate:make": "knex migrate:make migration -x ts",
+    "migrate:latest:dev": "knex migrate:latest --env development",
+    "migrate:rollback:last": "knex migrate:rollback",
+    "migrate:rollback:all": "knex migrate:rollback --all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "4.17.21",
+    "@types/node": "22.5.4",
+    "nodemon": "3.1.4",
+    "ts-node": "10.9.2",
+    "typescript": "5.5.4",
+    "vite": "5.4.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "4.19.2",
+    "knex": "3.1.0",
+    "sqlite3": "5.1.7"
+  }
+}
