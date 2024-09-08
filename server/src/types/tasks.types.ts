@@ -19,3 +19,9 @@ export interface CreateTaskBody {
     title: string
     description: string | null
 }
+
+export interface EditTaskBody {
+    title: string
+    description: string | null
+    status: TaskStatuses
+}

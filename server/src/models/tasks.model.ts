@@ -1,5 +1,5 @@
 import { knex as knexBuilder } from 'knex'
-import { CreateTaskBody } from '../types/tasks.types'
+import { CreateTaskBody, EditTaskBody } from '../types/tasks.types'
 
 import type { Knex } from 'knex'
 
@@ -21,7 +21,19 @@ class TasksModel {
 
     async insertTask(data: CreateTaskBody) {
         return await knex('tasks')
-            .insert({ title: data.title, description: data.description })
+            .insert({ ...data })
+            .catch((e) => { throw Error(e) });
+    }
+
+    async updateTask(id: string, data: EditTaskBody) {
+        return await knex('tasks')
+            .update({ ...data, updated_at: knex.fn.now() })
+            .catch((e) => { throw Error(e) });
+    }
+
+    async deleteTask(id: string) {
+        return await knex('tasks')
+            .where({ id }).del()
             .catch((e) => { throw Error(e) });
     }
 }

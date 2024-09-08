@@ -28,15 +28,39 @@ class TasksController {
 
     async getTaksByID(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = req.params.id || '';
+            const id = req.params.id || ''
 
-            const task = await tasksModel.getTaskByID(id);
+            const task = await tasksModel.getTaskByID(id)
 
             res.json(task)
         } catch (err) {
             next(err)
         }
+    }
 
+    async editTask(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id || ''
+            const body = req.body
+
+            const task = await tasksModel.updateTask(id, body)
+
+            res.json(task)
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async deleteTask(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id || ''
+
+            const task = await tasksModel.deleteTask(id)
+
+            res.json(task)
+        } catch (err) {
+            next(err)
+        }
     }
 }
 
