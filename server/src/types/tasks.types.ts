@@ -4,7 +4,7 @@ enum TaskStatuses {
     DONE = 'done'
 }
 
-export interface Type {
+export interface Task {
     task_id: number // ???
     title: string // varchar(256),
     description: string // text,
@@ -24,4 +24,9 @@ export interface EditTaskBody {
     title: string
     description: string | null
     status: TaskStatuses
+}
+
+export interface GetTasksListBody {
+    limit: number
+    page: number
 }
