@@ -84,21 +84,48 @@ class TasksModel {
                 if (err.message.includes('title_length')) {
                     return { err: DBError.Constraint('task name length must be bigger than 2'), taskID: null }
                 }
+                if (err.message.includes('description_length')) {
+                    return { err: DBError.Constraint('description name length must be less than 1024'), taskID: null }
+                }
             }
             return { err: DBError.Internal(), taskID: null }
         }
     }
 
-    async updateTask(id: string, data: EditTaskBody) {
-        return await knex('tasks')
-            .update({ ...data, updated_at: knex.fn.now() })
-            .catch((e) => { throw Error(e) });
+    async updateTask(id: string, data: EditTaskBody): Promise<DBError | null> {
+        try {
+            const resCount = await knex('tasks').update({ ...data, updated_at: knex.fn.now() }).where({ id })
+
+            if (resCount < 1) return DBError.NotFound(`task with id ${id} not found`)
+
+            return null
+        } catch (err) {
+            console.log(err)
+            if (err instanceof Error) {
+                if (err.message.includes('tasks.title') && err.message.match(/unique/ig)) {
+                    return DBError.Constraint('task name must be unique')
+                }
+                if (err.message.includes('title_length')) {
+                    return DBError.Constraint('task name length must be bigger than 2')
+                }
+                if (err.message.includes('description_length')) {
+                    return DBError.Constraint('description name length must be less than 1024')
+                }
+            }
+            return DBError.Internal()
+        }
     }
 
-    async deleteTask(id: string) {
-        return await knex('tasks')
-            .where({ id }).del()
-            .catch((e) => { throw Error(e) });
+    async deleteTask(id: string): Promise<DBError | null> {
+        try {
+            const deletedID = await knex('tasks').where({ id }).del()
+
+            if (!deletedID) return DBError.NotFound(`task with id ${id} not found`)
+
+            return null
+        } catch (err) {
+            return DBError.Internal()
+        }
     }
 }
 

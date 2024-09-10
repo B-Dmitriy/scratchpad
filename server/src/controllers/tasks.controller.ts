@@ -1,5 +1,5 @@
 import { DBError, DBErrorType, tasksModel } from '../models/tasks.model'
-import type { CreateTaskBody, GetTasksListBody } from '../types/tasks.types'
+import type { CreateTaskBody, EditTaskBody, GetTasksListBody } from '../types/tasks.types'
 
 import type { Request, Response, NextFunction } from 'express'
 import { APIError } from '../utils/APIError'
@@ -44,7 +44,7 @@ class TasksController {
 
             apiErrorHanler(err)
 
-            res.json(taskID)
+            res.status(201).json(taskID)
         } catch (err) {
             next(err)
         }
@@ -66,12 +66,14 @@ class TasksController {
 
     async editTask(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = req.params.id || ''
-            const body = req.body
+            const id = req.params.id
+            const body: EditTaskBody = req.body
 
-            const task = await tasksModel.updateTask(id, body)
+            const err = await tasksModel.updateTask(id, body)
 
-            res.json(task)
+            apiErrorHanler(err)
+
+            res.status(200).end()
         } catch (err) {
             next(err)
         }
@@ -79,11 +81,13 @@ class TasksController {
 
     async deleteTask(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = req.params.id || ''
+            const id = req.params.id
 
-            const task = await tasksModel.deleteTask(id)
+            const err = await tasksModel.deleteTask(id)
 
-            res.json(task)
+            apiErrorHanler(err)
+
+            res.status(204).end()
         } catch (err) {
             next(err)
         }

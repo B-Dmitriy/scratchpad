@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<void> {
                 .checkLength('>', 2, 'title_length');
 
 
-            table.string('description', 1024);
+            table.string('description', 1024).checkLength('<', 1024, 'description_length');
 
             table.string('status').checkIn(['todo', 'in_progress', 'done']).notNullable().defaultTo('todo');
 
