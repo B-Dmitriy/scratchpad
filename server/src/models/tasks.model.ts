@@ -8,6 +8,7 @@ const knex: Knex = knexBuilder({
     connection: {
         filename: 'data.db',
     },
+    useNullAsDefault: true,
 });
 
 export enum DBErrorType {

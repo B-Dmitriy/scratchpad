@@ -4,7 +4,52 @@ import { validationMiddleware } from '../middlewares/validation.middleware';
 import { body, param, oneOf, check } from 'express-validator';
 
 const tasksRouter = Router()
+/**
+ * @swagger
+ * definitions:
+ *   TasksListResponse:
+ *     required:
+ *       - page
+ *       - limit
+ *     properties:
+ *       page:
+ *         type: number
+ *         default: 1
+ *       limit:
+ *         type: number
+ *         default: 2
+ *   TasksList:
+ *     properties:
+ *       types:
+ *         type: array
+ *       limit:
+ *         type: number
+ *       page:
+ *         type: number
+ *       total:
+ *         type: number
+ */
 
+/**
+ * @swagger
+ * /tasks:list:
+ *   post:
+ *     description: Login to the application
+ *     tags: [Tasks]
+ *     produces:
+ *       - application/json
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *             $ref: '#/definitions/TasksListResponse'
+ *     responses:
+ *       200:
+ *         schema:
+ *           type: object
+ *           $ref: '#/definitions/TasksList'
+ */
 tasksRouter.post('/tasks:list',
     body('limit').optional().isInt({ min: 1 }).withMessage('limit must be a positive integer'),
     body('page').optional().isInt({ min: 1 }).withMessage('page must be a positive integer'),
