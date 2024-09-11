@@ -11,10 +11,16 @@ describe('tasks controller', () => {
     it('test', (done) => {
         request(app)
             .post('/tasks:list')
-            .send({ page: 'Test', limit: 20 })
+            .send({ page: 'wrong', limit: 20 })
             .expect(400)
             .expect((res) => {
-                res.body.id = 'some fixed id';
+                res.body.message = 'validation error';
+                res.body.errors.length = 1
+            })
+            .send({ page: '1', limit: 20 })
+            .expect(400)
+            .expect((res) => {
+                res.body.id = 'validation error';
                 res.body.errors.length = 1
             })
             .end(done)
