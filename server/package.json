@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "compile": "tsc src/index.ts",
+    "test": "jest --forceExit",
     "migrate:make": "knex migrate:make migration -x ts",
     "migrate:latest:dev": "knex migrate:latest --env development",
     "migrate:rollback:last": "knex migrate:rollback",
@@ -16,13 +17,17 @@
   "license": "MIT",
   "devDependencies": {
     "@types/express": "4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "22.5.4",
+    "jest": "^29.7.0",
     "nodemon": "3.1.4",
+    "supertest": "7.0.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "10.9.2",
-    "typescript": "5.5.4",
-    "vite": "5.4.3"
+    "typescript": "5.5.4"
   },
   "dependencies": {
+    "@types/supertest": "^6.0.2",
     "body-parser": "1.20.2",
     "express": "4.19.2",
     "express-validator": "7.2.0",
