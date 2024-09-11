@@ -1,5 +1,5 @@
 import express from 'express'
-import { router } from './routes'
+import * as routes from './routes'
 import bodyParser from 'body-parser'
 import { errorsMiddleware } from './middlewares/errorMiddleware'
 
@@ -8,7 +8,7 @@ const port = 3000
 
 app.use(bodyParser.json())
 
-app.use('/', router)
+app.use('/', routes.tasksRouter)
 
 app.use(errorsMiddleware)
 
