@@ -9,12 +9,14 @@ function apiErrorHanler(err: Error | DBError | null) {
 
     if (err instanceof DBError) {
         switch (err.type) {
-        case DBErrorType.CONSTRAINT:
-            throw APIError.BadRequest(err.message);
-        case DBErrorType.NOT_FOUND:
-            throw APIError.NotFound(err.message);
-        case DBErrorType.INTERNAL:
-            throw APIError.ServerError();
+            case DBErrorType.CONSTRAINT:
+                throw APIError.BadRequest(err.message);
+            case DBErrorType.NOT_FOUND:
+                throw APIError.NotFound(err.message);
+            case DBErrorType.INTERNAL:
+                throw APIError.ServerError();
+            default:
+                throw APIError.ServerError();
         }
     } else {
         throw APIError.ServerError();
