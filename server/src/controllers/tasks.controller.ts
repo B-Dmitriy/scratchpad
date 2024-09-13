@@ -1,99 +1,97 @@
-import { DBError, DBErrorType, tasksModel } from '../models/tasks.model'
-import type { CreateTaskBody, EditTaskBody, GetTasksListBody } from '../types/tasks.types'
+import { APIError } from '../utils/APIError';
+import { DBError, DBErrorType, tasksModel } from '../models/tasks.model';
 
-import type { Request, Response, NextFunction } from 'express'
-import { APIError } from '../utils/APIError'
+import type { Request, Response, NextFunction } from 'express';
+import type { CreateTaskBody, EditTaskBody, GetTasksListBody } from '../types/tasks.types';
 
 function apiErrorHanler(err: Error | DBError | null) {
-    if (!err) return
+    if (!err) return;
 
     if (err instanceof DBError) {
         switch (err.type) {
-            case DBErrorType.CONSTRAINT:
-                throw APIError.BadRequest(err.message)
-            case DBErrorType.NOT_FOUND:
-                throw APIError.NotFound(err.message)
-            case DBErrorType.INTERNAL:
-                throw APIError.ServerError()
+        case DBErrorType.CONSTRAINT:
+            throw APIError.BadRequest(err.message);
+        case DBErrorType.NOT_FOUND:
+            throw APIError.NotFound(err.message);
+        case DBErrorType.INTERNAL:
+            throw APIError.ServerError();
         }
     } else {
-        throw APIError.ServerError()
+        throw APIError.ServerError();
     }
 }
 
 class TasksController {
     async getTasks(req: Request, res: Response, next: NextFunction) {
         try {
-            const body: GetTasksListBody = req.body
+            const body: GetTasksListBody = req.body;
 
-            const { err, list } = await tasksModel.getTasks(body.limit, body.page)
+            const { err, list } = await tasksModel.getTasks(body.limit, body.page);
 
-            apiErrorHanler(err)
+            apiErrorHanler(err);
 
-            res.json(list)
+            res.json(list);
         } catch (err) {
-            next(err)
+            next(err);
         }
     }
 
     async createTask(req: Request, res: Response, next: NextFunction) {
         try {
-            const body: CreateTaskBody = req.body
+            const body: CreateTaskBody = req.body;
 
-            const { err, taskID } = await tasksModel.insertTask(body)
+            const { err, taskID } = await tasksModel.insertTask(body);
 
-            apiErrorHanler(err)
+            apiErrorHanler(err);
 
-            res.status(201).json(taskID)
+            res.status(201).json(taskID);
         } catch (err) {
-            next(err)
+            next(err);
         }
     }
 
     async getTaksByID(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = req.params.id || ''
+            const id = req.params.id || '';
 
-            const { err, task } = await tasksModel.getTaskByID(id)
+            const { err, task } = await tasksModel.getTaskByID(id);
 
-            apiErrorHanler(err)
+            apiErrorHanler(err);
 
-            res.json(task)
+            res.json(task);
         } catch (err) {
-            next(err)
+            next(err);
         }
     }
 
     async editTask(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = req.params.id
-            const body: EditTaskBody = req.body
+            const id = req.params.id;
+            const body: EditTaskBody = req.body;
 
-            const err = await tasksModel.updateTask(id, body)
+            const err = await tasksModel.updateTask(id, body);
 
-            apiErrorHanler(err)
+            apiErrorHanler(err);
 
-            res.status(200).end()
+            res.status(200).end();
         } catch (err) {
-            next(err)
+            next(err);
         }
     }
 
     async deleteTask(req: Request, res: Response, next: NextFunction) {
         try {
-            const id = req.params.id
+            const id = req.params.id;
 
-            const err = await tasksModel.deleteTask(id)
+            const err = await tasksModel.deleteTask(id);
 
-            apiErrorHanler(err)
+            apiErrorHanler(err);
 
-            res.status(204).end()
+            res.status(204).end();
         } catch (err) {
-            next(err)
+            next(err);
         }
     }
 }
 
-const tasksController = new TasksController()
-
-export { tasksController }
+export const tasksController = new TasksController();

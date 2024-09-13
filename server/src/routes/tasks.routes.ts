@@ -1,9 +1,10 @@
-import { Router } from 'express'
-import { tasksController } from '../controllers/tasks.controller'
-import { validationMiddleware } from '../middlewares/validation.middleware';
-import { body, param, oneOf, check } from 'express-validator';
+import { Router } from 'express';
+import { body, param, oneOf } from 'express-validator';
 
-const tasksRouter = Router()
+import { tasksController } from '../controllers/tasks.controller';
+import { validationMiddleware } from '../middlewares/validation.middleware';
+
+const tasksRouter = Router();
 /**
  * @swagger
  * definitions:
@@ -51,29 +52,51 @@ const tasksRouter = Router()
  *           $ref: '#/definitions/TasksList'
  */
 tasksRouter.post('/tasks:list',
-    body('limit').optional().isInt({ min: 1 }).withMessage('limit must be a positive integer'),
-    body('page').optional().isInt({ min: 1 }).withMessage('page must be a positive integer'),
+    body('limit')
+        .optional().isInt({ min: 1 })
+        .withMessage('limit must be a positive integer'),
+    body('page')
+        .optional().isInt({ min: 1 })
+        .withMessage('page must be a positive integer'),
     validationMiddleware,
     tasksController.getTasks
 );
 
 tasksRouter.post('/tasks',
-    body('title').notEmpty().trim().withMessage('title is required'),
-    body('title').trim().isLength({ min: 2, max: 250 }).withMessage('length must be longer than 2 and shorter than 250'),
-    body('description').optional().isLength({ max: 1000 }).withMessage('max length for description 1000 chars'),
+    body('title')
+        .notEmpty().trim()
+        .withMessage('title is required'),
+    body('title')
+        .trim().isLength({ min: 2, max: 250 })
+        .withMessage('length must be longer than 2 and shorter than 250'),
+    body('description')
+        .optional().isLength({ max: 1000 })
+        .withMessage('max length for description 1000 chars'),
     validationMiddleware,
-    tasksController.createTask);
+    tasksController.createTask
+);
 
 tasksRouter.get('/tasks/:id',
-    param('id').notEmpty().trim().isInt({ min: 1 }).withMessage('id is required and must be a positive integer'),
+    param('id')
+        .notEmpty().trim().isInt({ min: 1 })
+        .withMessage('id is required and must be a positive integer'),
     validationMiddleware,
-    tasksController.getTaksByID);
+    tasksController.getTaksByID
+);
 
 tasksRouter.put('/tasks/:id',
-    param('id').notEmpty().trim().isInt({ min: 1 }).withMessage('id is required and must be a positive integer'),
-    body('title').notEmpty().trim().withMessage('title is required'),
-    body('title').trim().isLength({ min: 2, max: 250 }).withMessage('length must be longer than 2 and shorter than 250'),
-    body('description').optional().isLength({ max: 1000 }).withMessage('max length for description 1000 chars'),
+    param('id')
+        .notEmpty().trim().isInt({ min: 1 })
+        .withMessage('id is required and must be a positive integer'),
+    body('title')
+        .notEmpty().trim()
+        .withMessage('title is required'),
+    body('title')
+        .trim().isLength({ min: 2, max: 250 })
+        .withMessage('length must be longer than 2 and shorter than 250'),
+    body('description')
+        .optional().isLength({ max: 1000 })
+        .withMessage('max length for description 1000 chars'),
     body('status').trim().notEmpty(),
     oneOf([
         body('status').equals('todo'),
@@ -81,10 +104,15 @@ tasksRouter.put('/tasks/:id',
         body('status').equals('done'),
     ], { message: 'status must be in: todo, in_progress, done' }),
     validationMiddleware,
-    tasksController.editTask);
+    tasksController.editTask
+);
 
 tasksRouter.delete('/tasks/:id',
-    param('id').notEmpty().trim().isInt({ min: 1 }).withMessage('id is required and must be a positive integer'),
-    tasksController.deleteTask);
+    param('id')
+        .notEmpty().trim().isInt({ min: 1 })
+        .withMessage('id is required and must be a positive integer'),
+    validationMiddleware,
+    tasksController.deleteTask
+);
 
-export { tasksRouter }
+export { tasksRouter };

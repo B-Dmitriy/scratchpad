@@ -1,35 +1,25 @@
-import express from 'express'
-import * as routes from './routes'
-const swaggerUi = require('swagger-ui-express');
-import bodyParser from 'body-parser'
-import { errorsMiddleware } from './middlewares/errorMiddleware'
-const swaggerJsdoc = require('swagger-jsdoc');
+import express from 'express';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+import { swagger } from './routes/swagger.routes';
+import { tasksRouter } from './routes/tasks.routes';
+import { errorsMiddleware } from './middlewares/error.middleware';
 
-const app = express()
-const port = 3000
+dotenv.config();
 
-const options = {
-    failOnErrors: true,
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Hello World',
-            version: '1.0.0',
-        },
-    },
-    apis: ['./src/routes/*'],
-};
+const PORT = process.env.PORT || 3000;
+const app = express();
 
-const openapiSpecification = swaggerJsdoc(options);
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
-app.use('/', routes.tasksRouter)
+app.use('/swagger', swagger.serve, swagger.setup);
 
-app.use(errorsMiddleware)
+app.use('/', tasksRouter);
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+app.use(errorsMiddleware);
 
-export { app }
+app.listen(PORT, () => {
+    console.log(`Example app listening on port ${PORT}`);
+});
+
+export { app };

@@ -1,47 +1,38 @@
-import type { Knex } from "knex";
+// require('ts-node/register');
+import path from 'path';
+import dotenv from 'dotenv';
+import type { Knex } from 'knex';
 
-// Update with your config settings.
+dotenv.config();
 
-const config: { [key: string]: Knex.Config } = {
-  development: {
-    client: "sqlite3",
-    connection: {
-      filename: "./data.db"
-    }
-  },
+const environments: string[] = ['development', 'testing', 'production'];
 
-  staging: {
-    client: "postgresql",
-    connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
-    },
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      tableName: "migrations"
-    }
-  },
+// const connection: Knex.ConnectionConfig = {
+// host: process.env.DB_HOST as string,
+// database: process.env.DB_NAME as string,
+// user: process.env.DB_USER as string,
+// password: process.env.DB_PASSWORD as string,
+// };
 
-  production: {
-    client: "postgresql",
-    connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
-    },
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      tableName: "migrations"
-    }
-  }
-
+const connection: Knex.Sqlite3ConnectionConfig = {
+    filename: path.resolve(__dirname, `src/database/sqlite/${process.env.NODE_ENV}.db`)
 };
 
-module.exports = config;
+const commonConfig: Knex.Config = {
+    client: 'sqlite3',
+    connection,
+    useNullAsDefault: true,
+    pool: {
+        min: 2,
+        max: 10,
+    },
+    migrations: {
+        tableName: 'knex_migrations',
+        directory: 'src/database/migrations'
+    },
+    // seeds: {
+    //   directory: 'src/database/seeds'
+    // }
+};
+
+export default Object.fromEntries(environments.map((env: string) => [env, commonConfig]));
