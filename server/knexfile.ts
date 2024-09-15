@@ -15,17 +15,25 @@ const environments: string[] = ['development', 'testing', 'production'];
 // };
 
 const connection: Knex.Sqlite3ConnectionConfig = {
-    filename: path.resolve(__dirname, `src/database/sqlite/${process.env.NODE_ENV}.db`)
+    filename: path.resolve(__dirname, `src/database/sqlite/${process.env.NODE_ENV}.db`),
 };
+
+
+const pool: Knex.PoolConfig = {
+    min: 2,
+    max: 10,
+    afterCreate: (conn: { run: (arg: string, cb: () => void) => void }, done: () => void) => {
+        conn.run("PRAGMA foreign_keys = ON", done)
+        // done();
+    }
+}
+
 
 const commonConfig: Knex.Config = {
     client: 'sqlite3',
     connection,
     useNullAsDefault: true,
-    pool: {
-        min: 2,
-        max: 10,
-    },
+    pool,
     migrations: {
         tableName: 'knex_migrations',
         directory: 'src/database/migrations'
